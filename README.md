@@ -35,24 +35,6 @@ User Query
 ⏱️ Telemetry: tokens/sec · cost/request · per-agent latency spans
 ```
 
----
-
-## ✅ JD Requirements Covered
-
-| Google JD Requirement | Implementation |
-|---|---|
-| Python + DSA | Typed dataclasses, state machines, Python 3.13 |
-| Multi-agent (LangGraph, CrewAI, ADK) | **LangGraph** StateGraph with conditional edges |
-| RAG + Vector Databases | **ChromaDB** + SentenceTransformers embeddings |
-| Structured + Unstructured pipelines | SQLite (structured) + ChromaDB (unstructured) |
-| GCP Cloud Platform | FastAPI service containerizable for Cloud Run |
-| ReAct / Self-Reflection patterns | Relevance Grader + Query Rewriter loop |
-| Hierarchical Delegation | Supervisor → Specialist Agents (LangGraph) |
-| LLM tokens/sec, cost-per-request | Built-in `TelemetryTracker` per agent span |
-| Granular tracing & state management | Full span trace across all 7 agent hops |
-
----
-
 ## 🚀 Quick Start
 
 ### 1. Install dependencies
@@ -147,13 +129,3 @@ enterprise-rag-agent/
 | `LANGCHAIN_API_KEY` | Optional | [LangSmith](https://smith.langchain.com) — free dev tier |
 
 > **Without any keys**, the system runs using a built-in `MockLLM` that returns realistic responses — perfect for development and demos.
-
----
-
-## 🎓 Interview Talking Points
-
-1. **Why LangGraph over CrewAI?** — LangGraph gives explicit control over state machines and conditional edges, which is essential for production debugging and observability.
-2. **How do you prevent infinite self-reflection loops?** — `MAX_REFLECTION_ITERATIONS = 2` hard cap with fallback to best-effort answer.
-3. **How do you handle hallucinations?** — Hallucination Grader node cross-checks the generated answer against retrieved context before emitting it.
-4. **How is cost tracked?** — Each agent span records `input_tokens` and `output_tokens`, which are priced at Gemini Flash rates and accumulated into `total_cost_usd`.
-5. **How would you scale this to GCP?** — Containerize with Docker, deploy to Cloud Run (auto-scaling), swap ChromaDB for Vertex Vector Search, and use Vertex AI for Gemini.
